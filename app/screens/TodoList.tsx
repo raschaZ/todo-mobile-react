@@ -6,7 +6,6 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  ScrollView,
   Dimensions,
   KeyboardAvoidingView,
   Platform,
@@ -24,8 +23,8 @@ import {
 } from 'firebase/firestore';
 import { FIREBASE_DB } from '../../firebaseConfig';
 import TodoItem from '../components/TodoItem';
-import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-const { width, height } = Dimensions.get('window');
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+const { height } = Dimensions.get('window');
 
 interface Todo {
   id: string;
