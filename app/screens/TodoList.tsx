@@ -124,39 +124,35 @@ const TodoList = ({ navigation }: any) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -500}
       style={{ flex: 1 }}
     >
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
-        <Text style={[styles.title, { height: height * 0.07 }]}>List :</Text>
-        <View style={{ flex: 1 }}>
-          <ScrollView>
-            <FlatList
-              data={todos}
-              renderItem={renderTodoItem}
-              keyExtractor={keyExtractor}
-              contentContainerStyle={styles.container}
-            />
-          </ScrollView>
-        </View>
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Todo Title"
-            value={todoTitle}
-            onChangeText={setTodoTitle}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Todo Description"
-            value={todoDescription}
-            onChangeText={setTodoDescription}
-          />
-          <Pressable
-            style={styles.button}
-            onPress={addTodo}
-          >
-            <Text style={styles.text}>Add Todo</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
+      <Text style={[styles.title, { height: height * 0.07 }]}>List :</Text>
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={todos}
+          renderItem={renderTodoItem}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={styles.container}
+        />
+      </View>
+      <View>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Todo Title"
+          value={todoTitle}
+          onChangeText={setTodoTitle}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Todo Description"
+          value={todoDescription}
+          onChangeText={setTodoDescription}
+        />
+        <Pressable
+          style={styles.button}
+          onPress={addTodo}
+        >
+          <Text style={styles.text}>Add Todo</Text>
+        </Pressable>
+      </View>
     </KeyboardAvoidingView>
   );
 };
