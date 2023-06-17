@@ -61,7 +61,6 @@ const TodoList = ({ navigation }: any) => {
           ...doc.data(),
         })) as Todo[];
         setTodos(data);
-        console.log('rr', data);
       } catch (error) {
         console.error(error);
       }
