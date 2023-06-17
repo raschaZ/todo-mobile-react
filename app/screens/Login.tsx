@@ -1,23 +1,42 @@
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pressable } from 'react-native';
 import { TextInput } from 'react-native';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Details = () => {
+const Details = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const auth = getAuth();
 
+  useEffect(() => {
+    const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // navigation.navigate('List');
+      }
+    });
+    return unsubscribeFromAuthStatuChanged;
+  }, []);
+
   const logIn = async () => {
-    signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      navigation.navigate('List');
+    } catch (err: any) {
+      console.error('error while loging in ', err);
+    }
   };
   const signIn = async () => {
-    createUserWithEmailAndPassword(auth, email, password);
+    try {
+      await createUserWithEmailAndPassword(auth, email.trim(), password);
+    } catch (err: any) {
+      console.error('error while signing in ', err);
+    }
   };
   return (
     <View style={styles.container}>
@@ -31,7 +50,7 @@ const Details = () => {
         style={styles.input}
         placeholder="Enter password"
         value={password}
-        textContentType="password"
+        secureTextEntry={true}
         onChangeText={setPassword}
       />
       <Pressable
