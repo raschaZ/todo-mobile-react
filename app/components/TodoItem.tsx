@@ -23,7 +23,7 @@ export default function TodoItem(props: TodoItemProps) {
   useEffect(() => {
     const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // navigation.navigate('Login');
+        navigation.navigate('Login');
       }
     });
     return unsubscribeFromAuthStatuChanged;

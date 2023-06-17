@@ -6,6 +6,10 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
+  ScrollView,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {
   addDoc,
@@ -21,6 +25,8 @@ import {
 import { FIREBASE_DB } from '../../firebaseConfig';
 import TodoItem from '../components/TodoItem';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+const { width, height } = Dimensions.get('window');
+
 interface Todo {
   id: string;
   title: string;
@@ -77,7 +83,7 @@ const TodoList = ({ navigation }: any) => {
       title: todoTitle,
       done: false,
       description: todoDescription, // Add description
-      userId: currentUser?.uid, // Add description
+      userId: currentUser?.uid, // Add userId
     });
 
     // Clear the todo title input field after adding a todo
@@ -112,42 +118,46 @@ const TodoList = ({ navigation }: any) => {
   );
 
   const keyExtractor = (item: Todo) => item.id ?? Math.random().toString();
-
   return (
-    <View>
-      <Text style={styles.title}>List :</Text>
-      <FlatList
-        data={todos}
-        renderItem={renderTodoItem}
-        keyExtractor={keyExtractor}
-        contentContainerStyle={styles.container}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Todo Title"
-        value={todoTitle}
-        onChangeText={setTodoTitle}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Todo Description"
-        value={todoDescription}
-        onChangeText={setTodoDescription}
-      />
-      <Pressable
-        style={styles.button}
-        onPress={addTodo}
-      >
-        <Text style={styles.text}>Add Todo</Text>
-      </Pressable>
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate('Login')}
-      >
-        <Text style={styles.text}>go to login</Text>
-      </Pressable>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -500}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
+        <Text style={[styles.title, { height: height * 0.07 }]}>List :</Text>
+        <View style={{ flex: 1 }}>
+          <ScrollView>
+            <FlatList
+              data={todos}
+              renderItem={renderTodoItem}
+              keyExtractor={keyExtractor}
+              contentContainerStyle={styles.container}
+            />
+          </ScrollView>
+        </View>
+        <View>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Todo Title"
+            value={todoTitle}
+            onChangeText={setTodoTitle}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Todo Description"
+            value={todoDescription}
+            onChangeText={setTodoDescription}
+          />
+          <Pressable
+            style={styles.button}
+            onPress={addTodo}
+          >
+            <Text style={styles.text}>Add Todo</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
