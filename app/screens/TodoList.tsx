@@ -10,6 +10,8 @@ import {
 import {
   addDoc,
   collection,
+  query,
+  where,
   getDocs,
   updateDoc,
   doc,
@@ -18,8 +20,7 @@ import {
 } from 'firebase/firestore';
 import { FIREBASE_DB } from '../../firebaseConfig';
 import TodoItem from '../components/TodoItem';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 interface Todo {
   id: string;
   title: string;
@@ -31,28 +32,39 @@ const TodoList = ({ navigation }: any) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [todoTitle, setTodoTitle] = useState('');
   const [todoDescription, setTodoDescription] = useState('');
+  const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
   const auth = getAuth();
 
   useEffect(() => {
-    getDataFromFirestore();
     const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
       if (!user) {
         navigation.navigate('Login');
+      } else {
+        getDataFromFirestore();
       }
     });
     return unsubscribeFromAuthStatuChanged;
-  }, []);
+  }, [currentUser]);
 
   const getDataFromFirestore = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(FIREBASE_DB, 'todos'));
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Todo[];
-      setTodos(data);
-    } catch (error) {
-      console.error(error);
+    setCurrentUser(getAuth().currentUser);
+    if (currentUser) {
+      try {
+        const todosCollectionRef = collection(FIREBASE_DB, 'todos');
+        const todosQuery = query(
+          todosCollectionRef,
+          where('userId', '==', currentUser.uid)
+        );
+        const querySnapshot = await getDocs(todosQuery);
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Todo[];
+        setTodos(data);
+        console.log('rr', data);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -66,6 +78,7 @@ const TodoList = ({ navigation }: any) => {
       title: todoTitle,
       done: false,
       description: todoDescription, // Add description
+      userId: currentUser?.uid, // Add description
     });
 
     // Clear the todo title input field after adding a todo
@@ -128,6 +141,12 @@ const TodoList = ({ navigation }: any) => {
         onPress={addTodo}
       >
         <Text style={styles.text}>Add Todo</Text>
+      </Pressable>
+      <Pressable
+        style={styles.button}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <Text style={styles.text}>go to login</Text>
       </Pressable>
     </View>
   );

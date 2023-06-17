@@ -35,7 +35,8 @@ export default function TodoItem(props: TodoItemProps) {
         onPress={() => navigation.navigate('Details', { item: item })}
       >
         <Text style={[styles.rowItem, { width: width * 0.7, paddingLeft: 20 }]}>
-          {item.title} : {item.done ? 'Done' : 'To Do'}
+          {item.title}
+          {/* : {item.done ? 'Done' : 'To Do'} */}
         </Text>
       </Pressable>
       {!item.done ? (
