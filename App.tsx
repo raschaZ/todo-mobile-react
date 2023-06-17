@@ -15,9 +15,7 @@ export default function App() {
     const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        console.log('user', user);
       } else {
-        console.log('User is not authenticated');
         setUser(undefined);
       }
     });
@@ -26,7 +24,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? 'List' : 'Login'}>
+      <Stack.Navigator initialRouteName={1 ? 'List' : 'Login'}>
         <Stack.Screen
           name="Login"
           component={Login}

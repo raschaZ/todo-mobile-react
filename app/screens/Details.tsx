@@ -1,9 +1,18 @@
-import React from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Details = ({ route }: any) => {
+const Details = ({ route }: any, { navigation }: any) => {
   const { item } = route.params;
-
+  const auth = getAuth();
+  useEffect(() => {
+    const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigation.navigate('Login');
+      }
+    });
+    return unsubscribeFromAuthStatuChanged;
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Details</Text>

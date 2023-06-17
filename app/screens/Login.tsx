@@ -1,9 +1,10 @@
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pressable } from 'react-native';
 import { TextInput } from 'react-native';
 import { View, Text, StyleSheet } from 'react-native';
@@ -12,6 +13,15 @@ const Details = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.navigate('List');
+      }
+    });
+    return unsubscribeFromAuthStatuChanged;
+  }, []);
 
   const logIn = async () => {
     try {
@@ -40,7 +50,7 @@ const Details = ({ navigation }: any) => {
         style={styles.input}
         placeholder="Enter password"
         value={password}
-        textContentType="password"
+        secureTextEntry={true}
         onChangeText={setPassword}
       />
       <Pressable

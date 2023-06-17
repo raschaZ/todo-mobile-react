@@ -17,7 +17,8 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import { FIREBASE_DB } from '../../firebaseConfig';
-import TodoItem from './TodoItem';
+import TodoItem from '../components/TodoItem';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface Todo {
   id: string;
@@ -30,9 +31,16 @@ const TodoList = ({ navigation }: any) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [todoTitle, setTodoTitle] = useState('');
   const [todoDescription, setTodoDescription] = useState('');
+  const auth = getAuth();
 
   useEffect(() => {
     getDataFromFirestore();
+    const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigation.navigate('Login');
+      }
+    });
+    return unsubscribeFromAuthStatuChanged;
   }, []);
 
   const getDataFromFirestore = async () => {
@@ -163,7 +171,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    alignItems: 'center',
     width: '100%',
   },
 });
