@@ -9,6 +9,8 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 import {
   addDoc,
@@ -46,6 +48,7 @@ const TodoList = ({ navigation }: any) => {
   const [todoTitle, setTodoTitle] = useState('');
   const [todoDescription, setTodoDescription] = useState('');
   const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const auth = getAuth();
 
   useEffect(() => {
@@ -56,7 +59,25 @@ const TodoList = ({ navigation }: any) => {
         getDataFromFirestore();
       }
     });
-    return unsubscribeFromAuthStatuChanged;
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      unsubscribeFromAuthStatuChanged;
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
   }, [currentUser]);
 
   const getDataFromFirestore = async () => {
@@ -73,6 +94,8 @@ const TodoList = ({ navigation }: any) => {
           id: doc.id,
           ...doc.data(),
         })) as Todo[];
+        // Sort the data by title
+        data.sort((a, b) => a.title.localeCompare(b.title));
         setTodos(data);
       } catch (error) {
         console.error(error);
@@ -145,7 +168,7 @@ const TodoList = ({ navigation }: any) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -500}
       style={{ flex: 1 }}
     >
-      <Text style={[styles.title, { height: height * 0.07 }]}>My List </Text>
+      <Text style={[styles.title, { height: height * 0.07 }]}>My List</Text>
       <View style={{ flex: 1 }}>
         <FlatList
           data={todos}
@@ -167,18 +190,20 @@ const TodoList = ({ navigation }: any) => {
           value={todoDescription}
           onChangeText={setTodoDescription}
         />
-        <Pressable
+        <TouchableOpacity
           style={styles.button}
           onPress={addTodo}
         >
           <Text style={styles.text}>Add Todo</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.button, { backgroundColor: 'red' }]}
-          onPress={logOut}
-        >
-          <Text style={styles.text}>LogOut</Text>
-        </Pressable>
+        </TouchableOpacity>
+        {!keyboardVisible && (
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: 'red' }]}
+            onPress={logOut}
+          >
+            <Text style={styles.text}>LogOut</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </KeyboardAvoidingView>
   );

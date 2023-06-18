@@ -1,6 +1,12 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect } from 'react';
-import { View, Dimensions, Text, Pressable, StyleSheet } from 'react-native';
+import {
+  View,
+  Dimensions,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AntDesign } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
@@ -32,15 +38,10 @@ export default function TodoItem(props: TodoItemProps) {
   }, []);
   return (
     <View style={styles.rowContainer}>
-      <Pressable
-        style={[styles.text]}
-        onPress={() => navigation.navigate('Details', { item: item })}
-      >
-        <View
-          style={[
-            styles.rowItem,
-            { width: width * 0.7, paddingLeft: 5, flexDirection: 'row' },
-          ]}
+      <View style={[styles.text]}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Details', { item: item })}
+          style={[styles.rowItem, { width: width * 0.7, flexDirection: 'row' }]}
         >
           <Ionicons
             name="eye"
@@ -50,11 +51,11 @@ export default function TodoItem(props: TodoItemProps) {
           <Text style={[styles.text, { color: 'black', paddingLeft: 10 }]}>
             {item.title}
           </Text>
-        </View>
-      </Pressable>
+        </TouchableOpacity>
+      </View>
 
       {!item.done ? (
-        <Pressable
+        <TouchableOpacity
           style={styles.button}
           onPress={() => toggleTodoDone(item)}
         >
@@ -63,9 +64,9 @@ export default function TodoItem(props: TodoItemProps) {
             size={35}
             color="green"
           />
-        </Pressable>
+        </TouchableOpacity>
       ) : (
-        <Pressable
+        <TouchableOpacity
           style={styles.button}
           onPress={() => deleteTodoItem(item)}
         >
@@ -74,7 +75,7 @@ export default function TodoItem(props: TodoItemProps) {
             size={35}
             color="red"
           />
-        </Pressable>
+        </TouchableOpacity>
       )}
     </View>
   );

@@ -1,6 +1,14 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+const { width } = Dimensions.get('window');
 
 const Details = ({ route, navigation }: any) => {
   const { item } = route.params;
@@ -16,18 +24,18 @@ const Details = ({ route, navigation }: any) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Details</Text>
-      <Text>Title: {item.title}</Text>
-      <Text>Done: {item.done ? 'Yes' : 'No'}</Text>
+      <Text style={styles.details}>Title: {item.title}</Text>
+      <Text style={styles.details}>Done: {item.done ? 'Yes' : 'No'}</Text>
+      <Text style={styles.title}>Description:</Text>
       <ScrollView>
-        <Text style={styles.title}>Description:</Text>
         <Text style={styles.description}>{item.description}</Text>
       </ScrollView>
-      <Pressable
+      <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.goBack()}
       >
         <Text style={styles.buttonText}>go back</Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -39,6 +47,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingTop: 15,
+    marginVertical: 0.05 * width,
+    marginHorizontal: 0.05 * width,
+    elevation: 3,
+    shadowOffset: { width: 1, height: 1 },
+    shadowColor: '#333',
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   title: {
     margin: 5,
@@ -47,7 +65,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'black',
-    textAlign: 'justify',
+    textAlign: 'center',
   },
   text: {
     margin: 5,
@@ -62,11 +80,15 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
     padding: 5,
   },
+  details: {
+    textAlign: 'center',
+    padding: 5,
+  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     borderRadius: 4,
     elevation: 3,
     backgroundColor: 'blue',

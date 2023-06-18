@@ -60,6 +60,10 @@ const Route = () => {
         <Stack.Screen
           name="Details"
           component={Details}
+          options={{
+            headerShown: true,
+            header: () => <LogoTitle />,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
