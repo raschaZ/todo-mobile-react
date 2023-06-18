@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   FlatList,
   Text,
   TextInput,
-  Pressable,
-  StyleSheet,
   Dimensions,
   KeyboardAvoidingView,
   Platform,
@@ -29,6 +27,8 @@ import TodoItem from '../components/TodoItem';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import Toast from 'react-native-toast-message';
 import { CommonActions } from '@react-navigation/native';
+import { getStyles } from '../styles/styles';
+import { ThemeContext } from '../contexts/ThemeContext';
 const { height } = Dimensions.get('window');
 
 interface Todo {
@@ -53,6 +53,7 @@ const TodoList = ({ navigation }: any) => {
   const [isLoading, setisLoading] = useState(false);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isDescriptionFocused, setIsDescriptionFocused] = useState(false);
+  const { theme } = useContext(ThemeContext);
   const auth = getAuth();
 
   useEffect(() => {
@@ -176,25 +177,27 @@ const TodoList = ({ navigation }: any) => {
       </View>
     );
   }
+  const styles = getStyles(theme);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -500}
       style={{ flex: 1 }}
     >
-      <Text style={[styles.title, { height: height * 0.07 }]}>My List</Text>
+      <Text style={[styles.todoTitle, { height: height * 0.07 }]}>My List</Text>
       <View style={{ flex: 1 }}>
         <FlatList
           data={todos}
           renderItem={renderTodoItem}
           keyExtractor={keyExtractor}
-          contentContainerStyle={styles.container}
+          contentContainerStyle={styles.todoContainer}
         />
       </View>
       <View>
         <TextInput
           style={[
-            styles.input,
+            styles.todoInput,
             isTitleFocused && {
               borderColor: '#8cacde',
               borderWidth: 3,
@@ -208,7 +211,7 @@ const TodoList = ({ navigation }: any) => {
         />
         <TextInput
           style={[
-            styles.input,
+            styles.todoInput,
             isDescriptionFocused && {
               borderColor: '#8cacde',
               borderWidth: 3,
@@ -221,67 +224,25 @@ const TodoList = ({ navigation }: any) => {
           onBlur={() => setIsDescriptionFocused(false)}
         />
         <TouchableOpacity
-          style={styles.button}
+          style={styles.todoButton}
           onPress={addTodo}
         >
-          <Text style={styles.text}>Add Todo</Text>
+          <Text style={styles.todoText}>Add Todo</Text>
         </TouchableOpacity>
         {!keyboardVisible && (
           <TouchableOpacity
             style={[
-              styles.button,
+              styles.todoButton,
               { backgroundColor: 'white', borderColor: 'red', borderWidth: 1 },
             ]}
             onPress={logOut}
           >
-            <Text style={[styles.text, { color: 'red' }]}>LogOut</Text>
+            <Text style={[styles.todoText, { color: 'red' }]}>LogOut</Text>
           </TouchableOpacity>
         )}
       </View>
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'blue',
-    margin: 5,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: 'gray',
-    textAlign: 'center',
-    borderRadius: 4,
-    elevation: 3,
-    borderColor: 'gray',
-  },
-  text: {
-    margin: 5,
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-    textAlign: 'center',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 5,
-    paddingHorizontal: 10,
-  },
-  container: {
-    flexGrow: 1,
-    width: '100%',
-  },
-});
 
 export default TodoList;

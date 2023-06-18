@@ -1,15 +1,11 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import React, { useEffect } from 'react';
-import {
-  View,
-  Dimensions,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useEffect, useContext } from 'react';
+import { View, Dimensions, Text, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AntDesign } from '@expo/vector-icons';
-const { width, height } = Dimensions.get('window');
+import { getStyles } from '../styles/styles';
+import { ThemeContext } from '../contexts/ThemeContext';
+const { width } = Dimensions.get('window');
 
 interface Todo {
   id: string;
@@ -27,6 +23,7 @@ interface TodoItemProps {
 
 export default function TodoItem(props: TodoItemProps) {
   const { navigation, item, toggleTodoDone, deleteTodoItem } = props;
+  const { theme } = useContext(ThemeContext);
   const auth = getAuth();
   useEffect(() => {
     const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
@@ -36,9 +33,11 @@ export default function TodoItem(props: TodoItemProps) {
     });
     return unsubscribeFromAuthStatuChanged;
   }, []);
+  const styles = getStyles(theme);
+
   return (
-    <View style={styles.rowContainer}>
-      <View style={[styles.text]}>
+    <View style={styles.itemRowContainer}>
+      <View style={[styles.itemText]}>
         <TouchableOpacity
           onPress={() => navigation.navigate('Details', { item: item })}
           style={[styles.rowItem, { width: width * 0.7, flexDirection: 'row' }]}
@@ -48,7 +47,7 @@ export default function TodoItem(props: TodoItemProps) {
             size={30}
             color="gray"
           />
-          <Text style={[styles.text, { color: 'black', paddingLeft: 10 }]}>
+          <Text style={[styles.itemText, { color: 'black', paddingLeft: 10 }]}>
             {item.title}
           </Text>
         </TouchableOpacity>
@@ -56,7 +55,7 @@ export default function TodoItem(props: TodoItemProps) {
 
       {!item.done ? (
         <TouchableOpacity
-          style={styles.button}
+          style={styles.itemButton}
           onPress={() => toggleTodoDone(item)}
         >
           <AntDesign
@@ -67,7 +66,7 @@ export default function TodoItem(props: TodoItemProps) {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          style={styles.button}
+          style={styles.itemButton}
           onPress={() => deleteTodoItem(item)}
         >
           <Ionicons
@@ -80,34 +79,3 @@ export default function TodoItem(props: TodoItemProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 9,
-  },
-  text: {
-    margin: 5,
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-  },
-  rowItem: {
-    flex: 1,
-    padding: 5,
-    textAlign: 'left',
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    width: '97%',
-    justifyContent: 'center',
-    paddingHorizontal: 5,
-    borderRadius: 3,
-    elevation: 1,
-    margin: 5,
-  },
-});

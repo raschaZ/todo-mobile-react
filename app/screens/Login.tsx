@@ -1,16 +1,24 @@
+import React, { useState, useEffect, useContext } from 'react';
+import {
+  Dimensions,
+  TouchableOpacity,
+  TextInput,
+  View,
+  Text,
+} from 'react-native';
+import Toast from 'react-native-toast-message';
+import { ThemeContext } from '../contexts/ThemeContext';
 import {
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import React, { useState, useEffect } from 'react';
-import { Dimensions, TouchableOpacity } from 'react-native';
-import { TextInput } from 'react-native';
-import { View, Text, StyleSheet } from 'react-native';
-import Toast from 'react-native-toast-message';
 import extractErrorMessage from '../../utils/functions';
+import { getStyles } from '../styles/styles';
+
 const { width } = Dimensions.get('window');
+
 const showToast = (msg: string) => {
   Toast.show({
     type: 'error',
@@ -18,20 +26,22 @@ const showToast = (msg: string) => {
     text2: `${msg} 👋`,
   });
 };
-const Details = ({ navigation }: any) => {
+
+const Login = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const { theme } = useContext(ThemeContext);
   const auth = getAuth();
 
   useEffect(() => {
-    const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
+    const unsubscribeFromAuthStateChanged = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigation.navigate('List');
       }
     });
-    return unsubscribeFromAuthStatuChanged;
+    return unsubscribeFromAuthStateChanged;
   }, []);
 
   const logIn = async () => {
@@ -44,6 +54,7 @@ const Details = ({ navigation }: any) => {
       showToast(extractedMessage);
     }
   };
+
   const signIn = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
@@ -53,12 +64,15 @@ const Details = ({ navigation }: any) => {
       showToast(extractedMessage);
     }
   };
+
+  const styles = getStyles(theme);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>WELCOME</Text>
+    <View style={styles.loginContainer}>
+      <Text style={styles.loginTitle}>WELCOME</Text>
       <TextInput
         style={[
-          styles.input,
+          styles.loginInput,
           isEmailFocused && {
             borderColor: '#8cacde',
             borderWidth: 3,
@@ -72,7 +86,7 @@ const Details = ({ navigation }: any) => {
       />
       <TextInput
         style={[
-          styles.input,
+          styles.loginInput,
           isPasswordFocused && {
             borderColor: '#8cacde',
             borderWidth: 3,
@@ -86,75 +100,19 @@ const Details = ({ navigation }: any) => {
         onBlur={() => setIsPasswordFocused(false)}
       />
       <TouchableOpacity
-        style={styles.button}
+        style={styles.loginButton}
         onPress={logIn}
       >
-        <Text style={styles.text}>LogIn</Text>
+        <Text style={styles.loginText}>LogIn</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.button}
+        style={styles.loginButton}
         onPress={signIn}
       >
-        <Text style={styles.text}>SignIn</Text>
+        <Text style={styles.loginText}>SignIn</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    paddingTop: 15,
-    marginVertical: 0.05 * width,
-    marginHorizontal: 0.05 * width,
-    elevation: 3,
-    shadowOffset: { width: 1, height: 1 },
-    shadowColor: '#333',
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 5,
-    width: '90%',
-    paddingHorizontal: 10,
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'blue',
-    margin: 5,
-    width: '90%',
-  },
-  text: {
-    margin: 5,
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-    textAlign: 'center',
-  },
-  title: {
-    margin: 5,
-    fontSize: 30,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'blue',
-    textAlign: 'center',
-  },
-});
-
-export default Details;
+export default Login;
