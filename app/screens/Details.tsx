@@ -1,8 +1,8 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 
-const Details = ({ route }: any, { navigation }: any) => {
+const Details = ({ route, navigation }: any) => {
   const { item } = route.params;
   const auth = getAuth();
   useEffect(() => {
@@ -22,6 +22,12 @@ const Details = ({ route }: any, { navigation }: any) => {
         <Text style={styles.title}>Description:</Text>
         <Text style={styles.description}>{item.description}</Text>
       </ScrollView>
+      <Pressable
+        style={styles.button}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.buttonText}>go back</Text>
+      </Pressable>
     </View>
   );
 };
@@ -55,6 +61,26 @@ const styles = StyleSheet.create({
   description: {
     textAlign: 'justify',
     padding: 5,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'blue',
+    margin: 5,
+    width: '100%',
+  },
+  buttonText: {
+    margin: 5,
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

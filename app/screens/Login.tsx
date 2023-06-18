@@ -8,7 +8,15 @@ import React, { useState, useEffect } from 'react';
 import { Pressable } from 'react-native';
 import { TextInput } from 'react-native';
 import { View, Text, StyleSheet } from 'react-native';
-
+import Toast from 'react-native-toast-message';
+import extractErrorMessage from '../../utils/functions';
+const showToast = (msg: string) => {
+  Toast.show({
+    type: 'error',
+    text1: 'Hello',
+    text2: `${msg} 👋`,
+  });
+};
 const Details = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,14 +36,18 @@ const Details = ({ navigation }: any) => {
       await signInWithEmailAndPassword(auth, email.trim(), password);
       navigation.navigate('List');
     } catch (err: any) {
-      console.error('error while loging in ', err);
+      console.log('error while loging in ', err);
+      const extractedMessage = extractErrorMessage(err);
+      showToast(extractedMessage);
     }
   };
   const signIn = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
     } catch (err: any) {
-      console.error('error while signing in ', err);
+      console.log('error while signing in ', err);
+      const extractedMessage = extractErrorMessage(err);
+      showToast(extractedMessage);
     }
   };
   return (

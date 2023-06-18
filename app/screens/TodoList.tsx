@@ -23,7 +23,9 @@ import {
 } from 'firebase/firestore';
 import { FIREBASE_DB } from '../../firebaseConfig';
 import TodoItem from '../components/TodoItem';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import Toast from 'react-native-toast-message';
+import { CommonActions } from '@react-navigation/native';
 const { height } = Dimensions.get('window');
 
 interface Todo {
@@ -32,7 +34,13 @@ interface Todo {
   done: boolean;
   description: string;
 }
-
+const showToast = (msg: string) => {
+  Toast.show({
+    type: 'info',
+    text1: 'Hello',
+    text2: `${msg} 👋`,
+  });
+};
 const TodoList = ({ navigation }: any) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [todoTitle, setTodoTitle] = useState('');
@@ -71,10 +79,24 @@ const TodoList = ({ navigation }: any) => {
       }
     }
   };
-
+  const logOut = async () => {
+    try {
+      await signOut(auth);
+      console.log('User logged out successfully');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      );
+    } catch (error) {
+      console.log('Error occurred while logging out:', error);
+    }
+  };
   const addTodo = async () => {
     if (todoTitle.trim() === '' || todoDescription.trim() === '') {
-      // Don't add empty todos
+      showToast('Please fill all inputs');
+
       return;
     }
 
@@ -123,7 +145,7 @@ const TodoList = ({ navigation }: any) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -500}
       style={{ flex: 1 }}
     >
-      <Text style={[styles.title, { height: height * 0.07 }]}>List :</Text>
+      <Text style={[styles.title, { height: height * 0.07 }]}>My List </Text>
       <View style={{ flex: 1 }}>
         <FlatList
           data={todos}
@@ -150,6 +172,12 @@ const TodoList = ({ navigation }: any) => {
           onPress={addTodo}
         >
           <Text style={styles.text}>Add Todo</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.button, { backgroundColor: 'red' }]}
+          onPress={logOut}
+        >
+          <Text style={styles.text}>LogOut</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
