@@ -1,6 +1,14 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect } from 'react';
-import { View, Dimensions, Text, Pressable, StyleSheet } from 'react-native';
+import {
+  View,
+  Dimensions,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { AntDesign } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
 
 interface Todo {
@@ -30,29 +38,44 @@ export default function TodoItem(props: TodoItemProps) {
   }, []);
   return (
     <View style={styles.rowContainer}>
-      <Pressable
-        style={[styles.text]}
-        onPress={() => navigation.navigate('Details', { item: item })}
-      >
-        <Text style={[styles.rowItem, { width: width * 0.7, paddingLeft: 20 }]}>
-          {item.title}
-          {/* : {item.done ? 'Done' : 'To Do'} */}
-        </Text>
-      </Pressable>
+      <View style={[styles.text]}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Details', { item: item })}
+          style={[styles.rowItem, { width: width * 0.7, flexDirection: 'row' }]}
+        >
+          <Ionicons
+            name="eye"
+            size={30}
+            color="gray"
+          />
+          <Text style={[styles.text, { color: 'black', paddingLeft: 10 }]}>
+            {item.title}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {!item.done ? (
-        <Pressable
-          style={[styles.button, { backgroundColor: 'green' }]}
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => toggleTodoDone(item)}
         >
-          <Text style={styles.text}>Close</Text>
-        </Pressable>
+          <AntDesign
+            name="checkcircleo"
+            size={35}
+            color="green"
+          />
+        </TouchableOpacity>
       ) : (
-        <Pressable
-          style={[styles.button, { backgroundColor: 'red' }]}
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => deleteTodoItem(item)}
         >
-          <Text style={styles.text}>Delete</Text>
-        </Pressable>
+          <Ionicons
+            name="trash"
+            size={35}
+            color="red"
+          />
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -62,13 +85,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'blue',
-    margin: 5,
-    width: width * 0.2,
+    paddingTop: 9,
   },
   text: {
     margin: 5,
@@ -86,6 +103,11 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    width: '100%',
+    width: '97%',
+    justifyContent: 'center',
+    paddingHorizontal: 5,
+    borderRadius: 3,
+    elevation: 1,
+    margin: 5,
   },
 });
