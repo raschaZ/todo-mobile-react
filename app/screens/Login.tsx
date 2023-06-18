@@ -17,7 +17,7 @@ const Details = ({ navigation }: any) => {
   useEffect(() => {
     const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // navigation.navigate('List');
+        navigation.navigate('List');
       }
     });
     return unsubscribeFromAuthStatuChanged;

@@ -1,6 +1,6 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 const Details = ({ route }: any, { navigation }: any) => {
   const { item } = route.params;
@@ -15,10 +15,13 @@ const Details = ({ route }: any, { navigation }: any) => {
   }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Details</Text>
+      <Text style={styles.title}>Details</Text>
       <Text>Title: {item.title}</Text>
       <Text>Done: {item.done ? 'Yes' : 'No'}</Text>
-      <Text>Description: {item.description}</Text>
+      <ScrollView>
+        <Text style={styles.title}>Description:</Text>
+        <Text style={styles.description}>{item.description}</Text>
+      </ScrollView>
     </View>
   );
 };
@@ -29,6 +32,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    margin: 5,
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'black',
+    textAlign: 'justify',
   },
   text: {
     margin: 5,
@@ -37,7 +50,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'black',
-    textAlign: 'center',
+    textAlign: 'justify',
+  },
+  description: {
+    textAlign: 'justify',
+    padding: 5,
   },
 });
 
