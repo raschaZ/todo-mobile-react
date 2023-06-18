@@ -11,6 +11,7 @@ import {
   Platform,
   Keyboard,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   addDoc,
@@ -49,6 +50,9 @@ const TodoList = ({ navigation }: any) => {
   const [todoDescription, setTodoDescription] = useState('');
   const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+  const [isTitleFocused, setIsTitleFocused] = useState(false);
+  const [isDescriptionFocused, setIsDescriptionFocused] = useState(false);
   const auth = getAuth();
 
   useEffect(() => {
@@ -84,6 +88,7 @@ const TodoList = ({ navigation }: any) => {
     setCurrentUser(getAuth().currentUser);
     if (currentUser) {
       try {
+        setisLoading(true);
         const todosCollectionRef = collection(FIREBASE_DB, 'todos');
         const todosQuery = query(
           todosCollectionRef,
@@ -99,6 +104,8 @@ const TodoList = ({ navigation }: any) => {
         setTodos(data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setisLoading(false);
       }
     }
   };
@@ -162,6 +169,13 @@ const TodoList = ({ navigation }: any) => {
   );
 
   const keyExtractor = (item: Todo) => item.id ?? Math.random().toString();
+  if (isLoading) {
+    return (
+      <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -179,16 +193,32 @@ const TodoList = ({ navigation }: any) => {
       </View>
       <View>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isTitleFocused && {
+              borderColor: '#8cacde',
+              borderWidth: 3,
+            },
+          ]}
           placeholder="Enter Todo Title"
           value={todoTitle}
           onChangeText={setTodoTitle}
+          onFocus={() => setIsTitleFocused(true)}
+          onBlur={() => setIsTitleFocused(false)}
         />
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isDescriptionFocused && {
+              borderColor: '#8cacde',
+              borderWidth: 3,
+            },
+          ]}
           placeholder="Enter Todo Description"
           value={todoDescription}
           onChangeText={setTodoDescription}
+          onFocus={() => setIsDescriptionFocused(true)}
+          onBlur={() => setIsDescriptionFocused(false)}
         />
         <TouchableOpacity
           style={styles.button}
@@ -198,10 +228,13 @@ const TodoList = ({ navigation }: any) => {
         </TouchableOpacity>
         {!keyboardVisible && (
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: 'red' }]}
+            style={[
+              styles.button,
+              { backgroundColor: 'white', borderColor: 'red', borderWidth: 1 },
+            ]}
             onPress={logOut}
           >
-            <Text style={styles.text}>LogOut</Text>
+            <Text style={[styles.text, { color: 'red' }]}>LogOut</Text>
           </TouchableOpacity>
         )}
       </View>

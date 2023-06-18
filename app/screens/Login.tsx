@@ -5,11 +5,12 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
-import { Pressable } from 'react-native';
+import { Dimensions, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native';
 import { View, Text, StyleSheet } from 'react-native';
 import Toast from 'react-native-toast-message';
 import extractErrorMessage from '../../utils/functions';
+const { width } = Dimensions.get('window');
 const showToast = (msg: string) => {
   Toast.show({
     type: 'error',
@@ -20,6 +21,8 @@ const showToast = (msg: string) => {
 const Details = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const auth = getAuth();
 
   useEffect(() => {
@@ -52,31 +55,48 @@ const Details = ({ navigation }: any) => {
   };
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>WELCOME</Text>
       <TextInput
-        style={styles.input}
-        placeholder="Enter user Name"
+        style={[
+          styles.input,
+          isEmailFocused && {
+            borderColor: '#8cacde',
+            borderWidth: 3,
+          },
+        ]}
+        placeholder="Enter user email"
         value={email}
         onChangeText={setEmail}
+        onFocus={() => setIsEmailFocused(true)}
+        onBlur={() => setIsEmailFocused(false)}
       />
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          isPasswordFocused && {
+            borderColor: '#8cacde',
+            borderWidth: 3,
+          },
+        ]}
         placeholder="Enter password"
         value={password}
         secureTextEntry={true}
         onChangeText={setPassword}
+        onFocus={() => setIsPasswordFocused(true)}
+        onBlur={() => setIsPasswordFocused(false)}
       />
-      <Pressable
+      <TouchableOpacity
         style={styles.button}
         onPress={logIn}
       >
-        <Text style={styles.text}>logIn</Text>
-      </Pressable>
-      <Pressable
+        <Text style={styles.text}>LogIn</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         style={styles.button}
         onPress={signIn}
       >
-        <Text style={styles.text}>signIn</Text>
-      </Pressable>
+        <Text style={styles.text}>SignIn</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -87,12 +107,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingTop: 15,
+    marginVertical: 0.05 * width,
+    marginHorizontal: 0.05 * width,
+    elevation: 3,
+    shadowOffset: { width: 1, height: 1 },
+    shadowColor: '#333',
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     margin: 5,
+    width: '90%',
     paddingHorizontal: 10,
   },
   button: {
@@ -104,6 +136,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: 'blue',
     margin: 5,
+    width: '90%',
   },
   text: {
     margin: 5,
@@ -112,6 +145,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
+    textAlign: 'center',
+  },
+  title: {
+    margin: 5,
+    fontSize: 30,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'blue',
     textAlign: 'center',
   },
 });

@@ -48,6 +48,10 @@ const Route = () => {
         <Stack.Screen
           name="Login"
           component={Login}
+          options={{
+            headerShown: true,
+            header: () => <LogoTitle />,
+          }}
         />
         <Stack.Screen
           name="List"
